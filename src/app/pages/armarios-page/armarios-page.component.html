@@ -1,0 +1,77 @@
+<section class="page-header">
+  <div class="header-text">
+    <p class="hero-label">Organización</p>
+    <h1 class="title">Mis Armarios</h1>
+    <p class="subtitle">
+      Crea armarios para guardar y organizar la ropa que ya tienes registrada en tu inventario.
+    </p>
+  </div>
+  <a routerLink="/new-armario" class="add-button">+ Crear armario</a>
+</section>
+
+<section class="filters">
+  <div class="filters-row">
+    <div class="filter-field filter-field--search">
+      <label for="filterSearch">Buscar armario</label>
+      <input
+        id="filterSearch"
+        class="filter-input"
+        type="text"
+        placeholder="Nombre o descripción..."
+        [value]="filterSearch()"
+        (input)="updateFilterSearch($event)"
+      />
+    </div>
+
+    <div class="filter-field">
+      <label for="filterLocation">Ubicación</label>
+      <select
+        id="filterLocation"
+        class="filter-select"
+        [value]="filterLocation()"
+        (change)="updateFilterLocation($event)"
+      >
+        <option value="">Todas</option>
+        @for (location of locations(); track location) {
+          <option [value]="location">{{ location }}</option>
+        }
+      </select>
+    </div>
+
+    <button class="clear-button" type="button" (click)="clearFilters()">
+      Limpiar filtros
+    </button>
+  </div>
+
+  <p class="results-count">
+    {{ filteredWardrobes().length }} de {{ wardrobes().length }} armarios
+  </p>
+</section>
+
+<section class="wardrobes-list">
+  @for (wardrobe of filteredWardrobes(); track wardrobe.id) {
+    <article class="wardrobe-section">
+      <div class="wardrobe-header">
+        <div>
+          <p class="wardrobe-label">Armario</p>
+          <h2 class="wardrobe-title">{{ wardrobe.name }}</h2>
+          @if (wardrobe.description) {
+            <p class="wardrobe-description">{{ wardrobe.description }}</p>
+          }
+        </div>
+        <div class="wardrobe-meta">
+          <span class="meta-tag">{{ wardrobe.location }}</span>
+          <span class="meta-count">{{ wardrobe.garments.length }} prendas</span>
+        </div>
+      </div>
+
+      <div class="garments-grid">
+        @for (garment of wardrobe.garments; track garment.id) {
+          <app-garment-card [garment]="garment"></app-garment-card>
+        }
+      </div>
+    </article>
+  } @empty {
+    <p class="empty-state">No se encontraron armarios con esos filtros.</p>
+  }
+</section>

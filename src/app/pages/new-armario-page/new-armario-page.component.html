@@ -1,0 +1,102 @@
+<div class="page">
+  <a routerLink="/armarios" class="back-link">← Volver a armarios</a>
+
+  <section class="page-header">
+    <p class="hero-label">Nuevo armario</p>
+    <h1 class="title">Crear armario</h1>
+    <p class="subtitle">
+      Elige un nombre, ubícalo y selecciona las prendas de tu inventario que quieres guardar aquí.
+    </p>
+    <div class="divider"></div>
+  </section>
+
+  <form class="form" (submit)="save($event)">
+    <div class="form-fields">
+      <div class="label">
+        <label for="wardrobeName">Nombre del armario</label>
+        <input
+          class="inputField"
+          id="wardrobeName"
+          name="wardrobeName"
+          placeholder="Ej. Closet principal"
+          [value]="name()"
+          (input)="updateName($event)"
+          required
+        />
+      </div>
+
+      <div class="label">
+        <label for="wardrobeLocation">Ubicación</label>
+        <select
+          class="inputField"
+          id="wardrobeLocation"
+          name="wardrobeLocation"
+          [value]="location()"
+          (change)="updateLocation($event)"
+          required
+        >
+          <option value="" disabled selected>Selecciona una ubicación</option>
+          @for (wardrobeLocation of locations; track wardrobeLocation) {
+            <option [value]="wardrobeLocation">{{ wardrobeLocation }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="label">
+      <label for="wardrobeDescription">Descripción (opcional)</label>
+      <textarea
+        class="inputField textarea"
+        id="wardrobeDescription"
+        name="wardrobeDescription"
+        rows="3"
+        placeholder="Ej. Prendas de uso diario"
+        [value]="description()"
+        (input)="updateDescription($event)"
+      ></textarea>
+    </div>
+
+    <section class="garment-picker">
+      <div class="picker-header">
+        <h2 class="section-title">Prendas del inventario</h2>
+        <p class="picker-hint">
+          Haz clic para agregar prendas a este armario. Seleccionadas:
+          {{ selectedGarmentIds().length }}
+        </p>
+      </div>
+
+      <div class="garments-grid">
+        @for (garment of garments(); track garment.id) {
+          <button
+            type="button"
+            class="garment-option"
+            [class.garment-option--selected]="isSelected(garment.id)"
+            (click)="toggleGarment(garment.id)"
+          >
+            <app-garment-card [garment]="garment"></app-garment-card>
+            <span class="selection-badge">
+              {{ isSelected(garment.id) ? '✓ En el armario' : 'Agregar' }}
+            </span>
+          </button>
+        }
+      </div>
+    </section>
+
+    @if (selectedGarments().length > 0) {
+      <section class="preview">
+        <h2 class="section-title">Vista previa del armario</h2>
+        <div class="garments-grid">
+          @for (garment of selectedGarments(); track garment.id) {
+            <app-garment-card [garment]="garment"></app-garment-card>
+          }
+        </div>
+      </section>
+    }
+
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+
+    <button class="button" type="submit">Guardar armario</button>
+  </form>
+</div>
