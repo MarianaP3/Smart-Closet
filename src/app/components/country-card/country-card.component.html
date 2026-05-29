@@ -1,8 +1,14 @@
 <div class="card">
-    <img [src]="country().flag" [alt]="country().name">
-    <p class="title">Name: {{ country().name }}</p>
-    <p>Capital: {{ country().capital }}</p>
-    <!--<p [ngClass]="{'highlight': country.population > 30000000}">Population: {{ country.population | number }}</p>-->
-    <p [class.highlight]="country().population > 30000000">{{country().population}}</p>
-    <p>Region: {{ country().region }}</p>
-</div>   
+    <div class="image-wrapper">
+        <img [src]="country().flag" [alt]="country().name">
+    </div>
+    <div class="card-body">
+        <p class="card-label">Prenda</p>
+        <p class="title">{{ country().name }}</p>
+        <p class="detail"><span>Tipo de prenda</span> {{ country().capital }}</p>
+        <p class="detail" [class.highlight]="country().population > 30000000">
+            <span>Color</span> {{ country().population | number }}
+        </p>
+        <p class="detail"><span>Talla</span> {{ country().region }}</p>
+    </div>
+</div>

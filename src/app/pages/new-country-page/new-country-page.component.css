@@ -1,52 +1,91 @@
-.mainContainer{
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 40px;
+.mainContainer {
+  text-align: center;
+  margin: 48px auto 60px;
+  max-width: 520px;
+  padding: 0 20px;
 }
-.title{
-    font-size: 32px;
-    font-weight: semi-bold;
-    margin: 0;
+
+.hero-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 12px;
 }
-.subtitle{
-    font-size: 18px;
-    color: gray;
-    margin: 0;
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: var(--color-text);
 }
-.formContainer{
-    margin-top: 30px;
-    width: 100%;
-    display: flex;
-    justify-content: left;
-    padding-left: 20px;
+
+.subtitle {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.7;
 }
+
+.divider {
+  width: 48px;
+  height: 1px;
+  background-color: var(--color-accent);
+  margin: 28px auto 36px;
+}
+
+.formContainer {
+  text-align: left;
+}
+
 .button {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: hotpink;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    text-align: center;
-    width: 150px;
-    cursor: pointer;
-    margin-top: 4%;
+  display: block;
+  margin: 32px auto 0;
+  padding: 12px 32px;
+  background-color: var(--color-text);
+  color: var(--color-surface);
+  border: 1px solid var(--color-text);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
+
 .button:hover {
-    background-color: deeppink;
+  background-color: transparent;
+  color: var(--color-text);
 }
-.inputField{
-    width: 80%;
-    padding: 10px;
-    margin-left: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
+
+.inputField {
+  width: 100%;
+  padding: 12px 14px;
+  margin-top: 6px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--color-text);
+  transition: border-color 0.2s ease;
 }
-.label{
-    text-align: end;
-    width: 260%;
-    margin-top: 15px;
+
+.inputField:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.label {
+  display: block;
+  margin-top: 18px;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text);
 }

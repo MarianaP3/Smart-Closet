@@ -1,22 +1,24 @@
 <div class="mainContainer">
-    <div class="title">Add New Country</div>
-    <p class="subtitle">Fill in the details below to add a new country</p>
+    <p class="hero-label">Nueva entrada</p>
+    <div class="title">Agregar a mi Closet</div>
+    <p class="subtitle">Completa los detalles para incluir una nueva prenda en tu closet.</p>
+    <div class="divider"></div>
     <div class="formContainer">
         <form>
         <div class="label">
-            <label for="countryName">Country Name:</label>
+            <label for="countryName">Nombre de la prenda:</label>
             <input class="inputField" id="countryName" name="countryName" required>
         </div>
         <div class="label">
-            <label for="countryCode">Capital:</label>
+            <label for="countryCode">Tipo de prenda:</label>
             <input class="inputField" type="text" id="capital" name="capital" required>
         </div>
         <div class="label">
-            <label for="population">Population:</label>
+            <label for="population">Color:</label>
             <input class="inputField" type="number" id="population" name="population" required>
         </div>
         <div class="label" id="region">
-            <label for="region">Region:</label>
+            <label for="region">Talla:</label>
             <select formControlName="region" class="inputField" required>
                 @for (region of regions; track region) {
                     <option [value]="region">
@@ -26,15 +28,10 @@
             </select>
         </div>
         <div class="label">
-            <label for="flagUrl">Flag URL:</label>
+            <label for="flagUrl">Imagen (URL):</label>
             <input class="inputField" type="text" id="flagUrl" name="flagUrl" required>
         </div>
-        <button class="button" type="submit">Add Country</button>
+        <button class="button" type="submit">Agregar a la colección</button>
     </form>
     </div>
 </div>
-<!--
-- Crear la nueva ruta
-- Agregar el enlace en el menú
-- Crear el formulario para agregar nuevos países
--->

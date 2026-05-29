@@ -1,12 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { ContentComponent } from "../../components/content/content/content.component";
 import { Country } from '../../interfaces/country.interface';
 import { ControlsComponent } from '../../components/controls/controls.component';
 import { CountryCardComponent } from '../../components/country-card/country-card.component';
 
 @Component({
   selector: 'app-home-page',
-  imports: [ContentComponent, CountryCardComponent, ControlsComponent],
+  imports: [CountryCardComponent, ControlsComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css'
 })

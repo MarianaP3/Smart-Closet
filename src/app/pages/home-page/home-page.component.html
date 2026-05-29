@@ -1,12 +1,13 @@
-<app-content></app-content>
-<div class="mainContainer">
-    <p class="title">Countries in the world</p>
-    <p class="subtitle">List of countries with their respective populations and flags.</p>
+<div class="hero">
+    <p class="hero-label">Inicio</p>
+    <h1 class="title">Mi Closet Inteligente</h1>
+    <p class="subtitle">Explora tus prendas y descubre la esencia única de cada outfit.</p>
+    <div class="hero-divider"></div>
 </div>
 
 <div class="filters">
     <app-controls (sortByName)="orderByName()" (sortByPopulation)="orderByPopulation()"></app-controls>
-  </div>
+</div>
 
 <div class="container">
     @for (country of countries(); track country.name) {

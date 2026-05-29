@@ -1,37 +1,55 @@
-.mainContainer{
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 40px;
+.hero {
+  text-align: center;
+  margin: 48px auto 36px;
+  max-width: 640px;
+  padding: 0 20px;
 }
-.title{
-    font-size: 32px;
-    font-weight: semi-bold;
-    margin: 0;
+
+.hero-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 12px;
 }
-.subtitle{
-    font-size: 18px;
-    color: gray;
-    margin: 0;
+
+.title {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: var(--color-text);
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.7;
+}
+
+.hero-divider {
+  width: 48px;
+  height: 1px;
+  background-color: var(--color-accent);
+  margin: 28px auto 0;
 }
 
 .container {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-}
-
-.controls {
-  margin-bottom: 15px;
-  display: flex;
-  gap: 5px;
-}
-
-.button{
-  border-radius: 8px;
+  justify-content: center;
+  gap: 24px;
+  padding: 0 24px 48px;
 }
 
 .filters {
   text-align: right;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
+  padding: 0 24px;
   width: 100%;
 }

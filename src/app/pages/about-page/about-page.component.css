@@ -1,15 +1,38 @@
-.mainContainer{
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 40px;
+.mainContainer {
+  text-align: center;
+  margin: 48px auto;
+  max-width: 560px;
+  padding: 0 20px;
 }
-.title{
-    font-size: 32px;
-    font-weight: semi-bold;
-    margin: 0;
+
+.hero-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 12px;
 }
-.subtitle{
-    font-size: 18px;
-    color: gray;
-    margin: 0;
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.7;
+}
+
+.divider {
+  width: 48px;
+  height: 1px;
+  background-color: var(--color-accent);
+  margin: 28px auto 0;
 }

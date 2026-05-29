@@ -1,30 +1,78 @@
 .card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 16px;
-  height: 390px;
-  text-align: left;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  object-fit: cover;
-  img {
-    width: 280px;
-    height: auto;
-    border-radius: 8px;
-  }
-  border-left: 10px solid pink;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  width: 280px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .card:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  height: 395px;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
 }
 
-.highlight {
-  color: blue;
+.image-wrapper {
+  overflow: hidden;
+  height: 180px;
+  background-color: var(--color-accent-light);
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .image-wrapper img {
+  transform: scale(1.05);
+}
+
+.card-body {
+  padding: 20px 22px 24px;
+  border-top: 2px solid var(--color-accent);
+}
+
+.card-label {
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 6px;
 }
 
 .title {
-  font-weight: semi-bold;
-  font-size: 20px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 14px;
+  color: var(--color-text);
+}
+
+.detail {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 0 0 6px;
+  font-weight: 300;
+}
+
+.detail span {
+  display: inline-block;
+  min-width: 72px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  color: var(--color-text);
+}
+
+.highlight {
+  color: var(--color-accent-dark);
+  font-weight: 500;
+}
+
+.highlight span {
+  color: var(--color-accent-dark);
 }

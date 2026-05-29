@@ -1,22 +1,62 @@
-.menu{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin-top: 0px;
-    background-color: pink;
-    height: 50px;
+.header {
+  background-color: var(--color-text);
+  border-bottom: 1px solid var(--color-accent);
 }
-.menuItem{
-    text-decoration: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer; 
-    margin-left: 1%;
-    align-items:start;
-    width: 155px;
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px 12px;
+  gap: 4px;
 }
-.menuItem:hover{
-    color: hotpink;
-    font-size: 20px;
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--color-surface);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.brand-tagline {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--color-accent);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+.menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  padding: 16px 20px 20px;
+  border-top: 1px solid rgba(184, 149, 106, 0.25);
+}
+
+.menuItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.menuItem:hover {
+  color: var(--color-accent);
+}
+
+.menuItem svg {
+  opacity: 0.7;
 }
