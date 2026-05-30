@@ -94,7 +94,9 @@
     @if (errorMessage()) {
       <p class="error-message">{{ errorMessage() }}</p>
     }
-
-    <button class="button" type="submit">Guardar cambios</button>
+    <div class="buttons-container">
+      <button class="button" type="submit">Guardar cambios</button>
+      <button class="delete-button" type="button" (click)="deleteOutfit()">Eliminar outfit</button>
+    </div>
   </form>
 </div>

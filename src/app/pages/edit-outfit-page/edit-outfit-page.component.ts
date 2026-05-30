@@ -128,4 +128,9 @@ export class EditOutfitPageComponent implements OnInit {
 
     this.router.navigate(['/outfits']);
   }
+
+  deleteOutfit(): void {
+    this.outfitService.deleteOutfit(this.outfitId());
+    this.router.navigate(['/outfits']);
+  }
 }

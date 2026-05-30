@@ -84,4 +84,10 @@ export class OutfitService {
       ),
     );
   }
+
+  deleteOutfit(id: string): void {
+    this.outfits.update((outfits) =>
+      outfits.filter((outfit) => outfit.id !== id),
+    );
+  }
 }

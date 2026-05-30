@@ -50,4 +50,10 @@ export class WardrobeService {
       { id: nextId, ...wardrobe },
     ]);
   }
+
+  deleteWardrobe(id: string): void {
+    this.wardrobes.update((wardrobes) =>
+      wardrobes.filter((wardrobe) => wardrobe.id !== id),
+    );
+  }
 }

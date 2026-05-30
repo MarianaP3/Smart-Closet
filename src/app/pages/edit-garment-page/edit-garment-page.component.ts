@@ -66,6 +66,11 @@ export class EditGarmentPageComponent implements OnInit {
     this.image.set((event.target as HTMLInputElement).value);
   }
 
+  deleteGarment(): void {
+    this.garmentService.deleteGarment(this.garmentId());
+    this.router.navigate(['/inventory']);
+  }
+
   save(event: Event): void {
     event.preventDefault();
 

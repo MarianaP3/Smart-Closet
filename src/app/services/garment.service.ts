@@ -155,4 +155,10 @@ export class GarmentService {
       ),
     );
   }
+
+    deleteGarment(id: string): void {
+    this.garments.update((garments) =>
+      garments.filter((garment) => garment.id !== id),
+    );
+  }
 }
