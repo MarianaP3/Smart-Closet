@@ -1,77 +1,65 @@
 import { Injectable, signal } from '@angular/core';
-import { User } from '../interfaces/user.interface';
-
-const INITIAL_USERS: User[] = [
-  {
-    id: '1',
-    name: 'María López',
-    email: 'maria@smartcloset.com',
-    password: 'admin123',
-    role: 'Administrador',
-  },
-  {
-    id: '2',
-    name: 'Ana García',
-    email: 'ana@example.com',
-    password: 'usuario123',
-    role: 'Usuario',
-  },
-  {
-    id: '3',
-    name: 'Carlos Ruiz',
-    email: 'carlos@example.com',
-    password: 'usuario123',
-    role: 'Usuario',
-  },
-  {
-    id: '4',
-    name: 'Sofía Mendoza',
-    email: 'sofia@example.com',
-    password: 'usuario123',
-    role: 'Usuario',
-  },
-];
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { UpdateUserPayload, User } from '../interfaces/user.interface';
+import { buildApiUrl } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-
-  constructor() {}
-
-  private users = signal<User[]>(INITIAL_USERS);
+  private apiUrl = buildApiUrl('/api/users');
+  private users = signal<User[]>([]);
 
   readonly allUsers = this.users.asReadonly();
+
+  constructor(private http: HttpClient) {}
+
+  loadUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl).pipe(
+      tap((users) => this.users.set(users)),
+    );
+  }
 
   getById(id: string): User | undefined {
     return this.users().find((user) => user.id === id);
   }
 
-  updateUser(
-    id: string,
-    changes: Omit<User, 'id' | 'password'> & { password?: string },
-  ): void {
-    this.users.update((users) =>
-      users.map((user) => {
-        if (user.id !== id) return user;
+  getByIdFromApi(id: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`).pipe(
+      tap((user) => {
+        const exists = this.users().some((item) => item.id === user.id);
 
-        return {
-          id,
-          name: changes.name,
-          email: changes.email,
-          role: changes.role,
-          password: changes.password?.trim() ? changes.password : user.password,
-        };
+        if (exists) {
+          this.users.update((items) =>
+            items.map((item) => (item.id === user.id ? user : item)),
+          );
+        } else {
+          this.users.update((items) => [...items, user]);
+        }
       }),
     );
   }
 
-  deleteUser(id: string): boolean {
-    if (this.users().length <= 1) {
-      return false;
-    }
+  updateUser(id: string, changes: UpdateUserPayload): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}`, changes).pipe(
+      tap((updated) => {
+        this.users.update((users) =>
+          users.map((user) => (user.id === id ? updated : user)),
+        );
+      }),
+    );
+  }
 
-    this.users.update((users) => users.filter((user) => user.id !== id));
-    return true;
+  deleteUser(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() =>
+        this.users.update((users) => users.filter((user) => user.id !== id)),
+      ),
+    );
+  }
+
+  clearUsers(): void {
+    this.users.set([]);
   }
 }

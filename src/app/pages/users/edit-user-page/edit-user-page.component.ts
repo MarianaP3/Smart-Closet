@@ -16,11 +16,12 @@ export class EditUserPageComponent implements OnInit {
   private router = inject(Router);
 
   public userId = signal('');
-  public name = signal('');
-  public email = signal('');
+  public username = signal('');
   public role = signal<'Usuario' | 'Administrador'>('Usuario');
   public password = signal('');
   public errorMessage = signal('');
+  public isSaving = signal(false);
+  public isLoading = signal(true);
 
   public roles: Array<'Usuario' | 'Administrador'> = ['Usuario', 'Administrador'];
 
@@ -34,25 +35,21 @@ export class EditUserPageComponent implements OnInit {
       return;
     }
 
-    const user = this.userService.getById(id);
-
-    if (!user) {
-      this.router.navigate(['/not-found']);
-      return;
-    }
-
-    this.userId.set(user.id);
-    this.name.set(user.name);
-    this.email.set(user.email);
-    this.role.set(user.role);
+    this.userService.getByIdFromApi(id).subscribe({
+      next: (user) => {
+        this.userId.set(user.id);
+        this.username.set(user.username);
+        this.role.set(user.role);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.router.navigate(['/not-found']);
+      },
+    });
   }
 
-  updateName(event: Event): void {
-    this.name.set((event.target as HTMLInputElement).value);
-  }
-
-  updateEmail(event: Event): void {
-    this.email.set((event.target as HTMLInputElement).value);
+  updateUsername(event: Event): void {
+    this.username.set((event.target as HTMLInputElement).value);
   }
 
   updateRole(event: Event): void {
@@ -69,13 +66,8 @@ export class EditUserPageComponent implements OnInit {
     event.preventDefault();
     this.errorMessage.set('');
 
-    if (!this.name().trim()) {
-      this.errorMessage.set('Escribe el nombre del usuario.');
-      return;
-    }
-
-    if (!this.email().trim()) {
-      this.errorMessage.set('Escribe un correo electrónico.');
+    if (!this.username().trim()) {
+      this.errorMessage.set('Escribe el nombre de usuario.');
       return;
     }
 
@@ -84,11 +76,11 @@ export class EditUserPageComponent implements OnInit {
       .some(
         (user) =>
           user.id !== this.userId() &&
-          user.email.toLowerCase() === this.email().trim().toLowerCase(),
+          user.username.toLowerCase() === this.username().trim().toLowerCase(),
       );
 
     if (duplicate) {
-      this.errorMessage.set('Ya existe otro usuario con ese correo.');
+      this.errorMessage.set('Ya existe otro usuario con ese nombre de usuario.');
       return;
     }
 
@@ -97,26 +89,46 @@ export class EditUserPageComponent implements OnInit {
       return;
     }
 
-    this.userService.updateUser(this.userId(), {
-      name: this.name().trim(),
-      email: this.email().trim(),
-      role: this.role(),
-      password: this.password().trim() || undefined,
-    });
+    this.isSaving.set(true);
 
-    this.router.navigate(['/usuarios']);
+    this.userService
+      .updateUser(this.userId(), {
+        username: this.username().trim(),
+        role: this.role(),
+        password: this.password().trim() || undefined,
+      })
+      .subscribe({
+        next: () => this.router.navigate(['/usuarios']),
+        error: (error) => {
+          this.isSaving.set(false);
+          this.errorMessage.set(this.getErrorMessage(error));
+        },
+      });
   }
 
   deleteUser(): void {
     this.errorMessage.set('');
 
-    const deleted = this.userService.deleteUser(this.userId());
+    this.userService.deleteUser(this.userId()).subscribe({
+      next: () => this.router.navigate(['/usuarios']),
+      error: (error) =>
+        this.errorMessage.set(this.getErrorMessage(error)),
+    });
+  }
 
-    if (!deleted) {
-      this.errorMessage.set('No puedes eliminar el último usuario del sistema.');
-      return;
+  private getErrorMessage(error: { status?: number; error?: { msg?: string } }): string {
+    if (error.status === 0) {
+      return 'No se pudo conectar con el servidor. Verifica que el backend esté corriendo.';
     }
 
-    this.router.navigate(['/usuarios']);
+    if (error.status === 403) {
+      return 'No tienes permisos para modificar usuarios.';
+    }
+
+    if (error.status === 400 && error.error?.msg === 'Username ya existente') {
+      return 'Ya existe otro usuario con ese nombre de usuario.';
+    }
+
+    return error.error?.msg ?? 'No se pudo guardar el usuario. Intenta de nuevo.';
   }
 }

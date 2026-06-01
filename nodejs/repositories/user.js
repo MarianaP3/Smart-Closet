@@ -32,7 +32,11 @@ class UserRepository{
         if(!ObjectId.isValid(id)){
             return null;
         }
-        return await User.updateOne({_id: id}, updateData);
+        return await User.findByIdAndUpdate(id, updateData, { new: true });
+    }
+
+    static async count(query = {}){
+        return await User.countDocuments(query);
     }
 }
 

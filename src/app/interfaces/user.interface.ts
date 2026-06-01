@@ -1,7 +1,11 @@
 export interface User {
   id: string;
-  name: string;
-  email: string;
-  password: string;
+  username: string;
   role: 'Usuario' | 'Administrador';
+}
+
+export interface UpdateUserPayload {
+  username: string;
+  role: 'Usuario' | 'Administrador';
+  password?: string;
 }

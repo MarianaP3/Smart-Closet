@@ -16,7 +16,7 @@
         id="filterSearch"
         class="filter-input"
         type="text"
-        placeholder="Nombre o correo..."
+        placeholder="Nombre de usuario o correo..."
         [value]="filterSearch()"
         (input)="updateFilterSearch($event)"
       />
@@ -47,22 +47,33 @@
   </p>
 </section>
 
-<section class="users-list">
-  @for (user of filteredUsers(); track user.id) {
-    <a [routerLink]="['/usuarios', user.id]" class="user-card">
-      <div class="user-info">
-        <p class="user-label">Usuario</p>
-        <h2 class="user-name">{{ user.name }}</h2>
-        <p class="user-email">{{ user.email }}</p>
-      </div>
-      <div class="user-meta">
-        <span class="role-tag" [class.role-tag--admin]="user.role === 'Administrador'">
-          {{ user.role }}
-        </span>
-        <span class="edit-hint">Editar usuario →</span>
-      </div>
-    </a>
-  } @empty {
-    <p class="empty-state">No se encontraron usuarios con esos filtros.</p>
-  }
-</section>
+@if (isLoading()) {
+  <p class="empty-state">Cargando usuarios...</p>
+} @else if (errorMessage()) {
+  <p class="empty-state">{{ errorMessage() }}</p>
+} @else {
+  <section class="users-list">
+    @for (user of filteredUsers(); track user.id) {
+      <a [routerLink]="['/usuarios', user.id]" class="user-card">
+        <div class="user-info">
+          <p class="user-label">Usuario</p>
+          <h2 class="user-name">{{ user.username }}</h2>
+        </div>
+        <div class="user-meta">
+          <span class="role-tag" [class.role-tag--admin]="user.role === 'Administrador'">
+            {{ user.role }}
+          </span>
+          <span class="edit-hint">Editar usuario →</span>
+        </div>
+      </a>
+    } @empty {
+      <p class="empty-state">
+        @if (users().length === 0) {
+          No hay usuarios registrados.
+        } @else {
+          No se encontraron usuarios con esos filtros.
+        }
+      </p>
+    }
+  </section>
+}
