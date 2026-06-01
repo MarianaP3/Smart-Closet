@@ -77,7 +77,7 @@ const register = async (req = request, res = response) =>{
         const newUser = await UserRepository.create({
             username: username,
             password: hashedPassword,
-            role: "Usuario"
+            role: 'Usuario',
         })
 
         /* const simpleUser = {

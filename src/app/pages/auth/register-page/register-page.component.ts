@@ -19,28 +19,31 @@ export class RegisterPageComponent {
   registrationError: string = '';
 
   onRegister() {
-    console.log('Registro con:', this.name, this.email, this.password, this.confirmPassword);
-  
     if (!this.name || !this.email || !this.password || !this.confirmPassword) {
       this.registrationError = 'Por favor, complete todos los campos';
       return;
     }
 
-    this.authService.register(this.email, this.password
-    ).subscribe(
-      response => {
-        console.log('Usuario registrado con éxito:', response);
-        this.registrationError = "Usuario Registrado con éxito";
+    if (this.password !== this.confirmPassword) {
+      this.registrationError = 'Las contraseñas no coinciden.';
+      return;
+    }
+
+    this.authService.register(this.email, this.password).subscribe({
+      next: () => {
+        this.registrationError = 'Usuario registrado con éxito';
         this.router.navigate(['/login']);
       },
-      error => {
-        console.error('Error al registrar el usuario:', error);
-        if (error.status === 400 && error.error.msg === 'Email ya existente') {
-          this.registrationError = 'El correo electrónico ya está registrado. Intenta con otro.';
+      error: (error) => {
+        if (error.status === 400 && error.error.msg === 'Username ya existente') {
+          this.registrationError =
+            'El nombre de usuario ya está registrado. Intenta con otro.';
         } else {
-          this.registrationError = 'Hubo un error al registrar el correo electrónico. Intenta nuevamente.';
+          this.registrationError =
+            error.error?.msg ??
+            'Hubo un error al registrar el usuario. Intenta nuevamente.';
         }
-      }
-    );
+      },
+    });
   }
 }

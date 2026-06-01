@@ -44,8 +44,9 @@ const getUserById = async (req = request, res = response) => {
 
 // Crear un nuevo usuario
 const createNewUser = async (req = request, res = response) => {
-  const { username, password, role = 'Usuario' } = req.body;
-  const userData = { username, password, role };
+  const { username, password, role } = req.body;
+  const userRole = role === 'Administrador' ? 'Administrador' : 'Usuario';
+  const userData = { username, password, role: userRole };
 
   if (!username || !password) {
     return res.status(400).json({
