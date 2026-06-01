@@ -2,13 +2,12 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { UpdateUserPayload, User } from '../interfaces/user.interface';
-import { buildApiUrl } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = buildApiUrl('/api/users');
+  private apiUrl = 'http://localhost:8080/api/users';
   private users = signal<User[]>([]);
 
   readonly allUsers = this.users.asReadonly();
