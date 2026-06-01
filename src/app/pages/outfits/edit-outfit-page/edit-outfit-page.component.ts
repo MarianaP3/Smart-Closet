@@ -52,7 +52,7 @@ export class EditOutfitPageComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.authService.redirectIfNotUser();
+    this.authService.redirectIfNotUserArea();
 
     if (!this.authService.isUser()) {
       this.router.navigate(['/not-found']);

@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GarmentCardComponent } from '../../../components/garment-card/garment-card.component';
+import { AuthService } from '../../../services/auth.service';
 import { GarmentService } from '../../../services/garment.service';
 import { WardrobeService } from '../../../services/wardrobe.service';
 
@@ -11,6 +12,7 @@ import { WardrobeService } from '../../../services/wardrobe.service';
   styleUrl: './edit-armario-page.component.css',
 })
 export class EditArmarioPageComponent implements OnInit {
+  private authService = inject(AuthService);
   private garmentService = inject(GarmentService);
   private wardrobeService = inject(WardrobeService);
   private route = inject(ActivatedRoute);
@@ -41,6 +43,8 @@ export class EditArmarioPageComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    this.authService.redirectIfNotUserArea();
+
     const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {

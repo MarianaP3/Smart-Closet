@@ -18,7 +18,7 @@ export class NewOutfitPageComponent {
   private router = inject(Router);
 
   ngOnInit(): void {
-    this.authService.redirectIfNotUser();
+    this.authService.redirectIfNotUserArea();
   }
 
   public name = signal('');

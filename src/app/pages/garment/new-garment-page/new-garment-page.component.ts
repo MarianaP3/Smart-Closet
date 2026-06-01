@@ -10,7 +10,7 @@ import { AuthService } from '../../../services/auth.service';
 export class NewGarmentPageComponent {
   private authService = inject(AuthService);
   ngOnInit(): void {
-    this.authService.redirectIfNotUser();
+    this.authService.redirectIfNotUserArea();
   }
 
   sizes = ['XS', 'S', 'M', 'L', 'XL', 'Única'];

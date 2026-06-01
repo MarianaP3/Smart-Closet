@@ -1,6 +1,7 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { GarmentCardComponent } from '../../../components/garment-card/garment-card.component';
+import { AuthService } from '../../../services/auth.service';
 import { GarmentService } from '../../../services/garment.service';
 import { WardrobeService } from '../../../services/wardrobe.service';
 
@@ -10,10 +11,15 @@ import { WardrobeService } from '../../../services/wardrobe.service';
   templateUrl: './new-armario-page.component.html',
   styleUrl: './new-armario-page.component.css',
 })
-export class NewArmarioPageComponent {
+export class NewArmarioPageComponent implements OnInit {
+  private authService = inject(AuthService);
   private garmentService = inject(GarmentService);
   private wardrobeService = inject(WardrobeService);
   private router = inject(Router);
+
+  ngOnInit(): void {
+    this.authService.redirectIfNotUserArea();
+  }
 
   public name = signal('');
   public location = signal('');

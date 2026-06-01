@@ -17,7 +17,7 @@ export class InventoryPageComponent {
   private authService = inject(AuthService);
 
   ngOnInit(): void {
-    this.authService.redirectIfNotUser();
+    this.authService.redirectIfNotUserArea();
   }
 
   public garments = this.garmentService.allGarments;

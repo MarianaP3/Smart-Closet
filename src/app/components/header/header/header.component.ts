@@ -24,6 +24,10 @@ export class HeaderComponent {
     return this.authService.isUser();
   }
 
+  hasUserAreaAccess(): boolean {
+    return this.authService.hasUserAreaAccess();
+  }
+
   currentUsername(): string | null {
     return this.authService.getCurrentUser();
   }
