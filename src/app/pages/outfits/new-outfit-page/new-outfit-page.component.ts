@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { GarmentCardComponent } from '../../../components/garment-card/garment-card.component';
 import { GarmentService } from '../../../services/garment.service';
@@ -11,22 +11,18 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './new-outfit-page.component.html',
   styleUrl: './new-outfit-page.component.css',
 })
-export class NewOutfitPageComponent {
+export class NewOutfitPageComponent implements OnInit {
   private authService = inject(AuthService);
   private garmentService = inject(GarmentService);
   private outfitService = inject(OutfitService);
   private router = inject(Router);
-
-  ngOnInit(): void {
-    this.authService.redirectIfNotUserArea();
-    this.garmentService.loadGarments().subscribe();
-  }
 
   public name = signal('');
   public style = signal('');
   public occasion = signal('');
   public selectedGarmentIds = signal<string[]>([]);
   public errorMessage = signal('');
+  public isSaving = signal(false);
 
   public garments = this.garmentService.allGarments;
 
@@ -53,6 +49,11 @@ export class NewOutfitPageComponent {
       this.selectedGarmentIds().includes(garment.id),
     ),
   );
+
+  ngOnInit(): void {
+    this.authService.redirectIfNotUserArea();
+    this.garmentService.loadGarments().subscribe();
+  }
 
   updateName(event: Event): void {
     this.name.set((event.target as HTMLInputElement).value);
@@ -102,13 +103,37 @@ export class NewOutfitPageComponent {
       return;
     }
 
-    this.outfitService.addOutfit({
-      name: this.name().trim(),
-      style: this.style(),
-      occasion: this.occasion(),
-      garmentIds: this.selectedGarmentIds(),
-    });
+    this.isSaving.set(true);
 
-    this.router.navigate(['/outfits']);
+    this.outfitService
+      .addOutfit({
+        name: this.name().trim(),
+        style: this.style(),
+        occasion: this.occasion(),
+        garmentIds: this.selectedGarmentIds(),
+      })
+      .subscribe({
+        next: () => this.router.navigate(['/outfits']),
+        error: (error) => {
+          this.isSaving.set(false);
+          this.errorMessage.set(this.getErrorMessage(error));
+        },
+      });
+  }
+
+  private getErrorMessage(error: { status?: number; error?: { msg?: string } }): string {
+    if (error.status === 0) {
+      return 'No se pudo conectar con el servidor. Verifica que el backend esté corriendo.';
+    }
+
+    if (error.status === 401) {
+      return 'Tu sesión expiró. Inicia sesión de nuevo.';
+    }
+
+    if (error.status === 404) {
+      return 'Ruta no encontrada en el servidor. Reinicia el backend (npm start en nodejs).';
+    }
+
+    return error.error?.msg ?? 'No se pudo crear el outfit. Intenta de nuevo.';
   }
 }

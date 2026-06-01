@@ -38,6 +38,19 @@ class GarmentRepository {
 
     return await Garment.deleteOne({ _id: id, user: userId });
   }
+
+  static async countByIdsAndUser(ids, userId) {
+    const validIds = ids.filter((id) => ObjectId.isValid(id));
+
+    if (validIds.length === 0) {
+      return 0;
+    }
+
+    return await Garment.countDocuments({
+      _id: { $in: validIds },
+      user: userId,
+    });
+  }
 }
 
 module.exports = { GarmentRepository };

@@ -63,6 +63,11 @@
   </p>
 </section>
 
+@if (isLoading()) {
+  <p class="empty-state">Cargando outfits...</p>
+} @else if (errorMessage()) {
+  <p class="empty-state">{{ errorMessage() }}</p>
+} @else {
 <section class="outfits-list">
   @for (outfit of filteredOutfits(); track outfit.id) {
     <article class="outfit-section">
@@ -88,6 +93,13 @@
       </div>
     </article>
   } @empty {
-    <p class="empty-state">No se encontraron outfits con esos filtros.</p>
+    <p class="empty-state">
+      @if (outfits().length === 0) {
+        Aún no tienes outfits. <a routerLink="/new-outfit">Crea el primero</a>.
+      } @else {
+        No se encontraron outfits con esos filtros.
+      }
+    </p>
   }
 </section>
+}

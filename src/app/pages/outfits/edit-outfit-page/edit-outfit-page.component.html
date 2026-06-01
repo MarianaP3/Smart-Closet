@@ -1,6 +1,9 @@
 <div class="page">
   <a routerLink="/outfits" class="back-link">← Volver a la galería</a>
 
+  @if (isLoading()) {
+    <p class="loading-message">Cargando outfit...</p>
+  } @else {
   <section class="page-header">
     <p class="hero-label">Editar look</p>
     <h1 class="title">Modificar outfit</h1>
@@ -95,8 +98,11 @@
       <p class="error-message">{{ errorMessage() }}</p>
     }
     <div class="buttons-container">
-      <button class="button" type="submit">Guardar cambios</button>
+      <button class="button" type="submit" [disabled]="isSaving()">
+        {{ isSaving() ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
       <button class="delete-button" type="button" (click)="deleteOutfit()">Eliminar outfit</button>
     </div>
   </form>
+  }
 </div>

@@ -24,6 +24,8 @@ export class EditOutfitPageComponent implements OnInit {
   public occasion = signal('');
   public selectedGarmentIds = signal<string[]>([]);
   public errorMessage = signal('');
+  public isSaving = signal(false);
+  public isLoading = signal(true);
 
   public garments = this.garmentService.allGarments;
 
@@ -53,7 +55,6 @@ export class EditOutfitPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.redirectIfNotUserArea();
-    this.garmentService.loadGarments().subscribe();
 
     const id = this.route.snapshot.paramMap.get('id');
 
@@ -62,18 +63,26 @@ export class EditOutfitPageComponent implements OnInit {
       return;
     }
 
-    const outfit = this.outfitService.getById(id);
-
-    if (!outfit) {
-      this.router.navigate(['/not-found']);
-      return;
-    }
-
-    this.outfitId.set(outfit.id);
-    this.name.set(outfit.name);
-    this.style.set(outfit.style);
-    this.occasion.set(outfit.occasion);
-    this.selectedGarmentIds.set([...outfit.garmentIds]);
+    this.garmentService.loadGarments().subscribe({
+      next: () => {
+        this.outfitService.getByIdFromApi(id).subscribe({
+          next: (outfit) => {
+            this.outfitId.set(outfit.id);
+            this.name.set(outfit.name);
+            this.style.set(outfit.style);
+            this.occasion.set(outfit.occasion);
+            this.selectedGarmentIds.set([...outfit.garmentIds]);
+            this.isLoading.set(false);
+          },
+          error: () => {
+            this.router.navigate(['/not-found']);
+          },
+        });
+      },
+      error: () => {
+        this.router.navigate(['/not-found']);
+      },
+    });
   }
 
   updateName(event: Event): void {
@@ -124,18 +133,41 @@ export class EditOutfitPageComponent implements OnInit {
       return;
     }
 
-    this.outfitService.updateOutfit(this.outfitId(), {
-      name: this.name().trim(),
-      style: this.style(),
-      occasion: this.occasion(),
-      garmentIds: this.selectedGarmentIds(),
-    });
+    this.isSaving.set(true);
 
-    this.router.navigate(['/outfits']);
+    this.outfitService
+      .updateOutfit(this.outfitId(), {
+        name: this.name().trim(),
+        style: this.style(),
+        occasion: this.occasion(),
+        garmentIds: this.selectedGarmentIds(),
+      })
+      .subscribe({
+        next: () => this.router.navigate(['/outfits']),
+        error: (error) => {
+          this.isSaving.set(false);
+          this.errorMessage.set(this.getErrorMessage(error));
+        },
+      });
   }
 
   deleteOutfit(): void {
-    this.outfitService.deleteOutfit(this.outfitId());
-    this.router.navigate(['/outfits']);
+    this.outfitService.deleteOutfit(this.outfitId()).subscribe({
+      next: () => this.router.navigate(['/outfits']),
+      error: (error) =>
+        this.errorMessage.set(this.getErrorMessage(error)),
+    });
+  }
+
+  private getErrorMessage(error: { status?: number; error?: { msg?: string } }): string {
+    if (error.status === 0) {
+      return 'No se pudo conectar con el servidor. Verifica que el backend esté corriendo.';
+    }
+
+    if (error.status === 401) {
+      return 'Tu sesión expiró. Inicia sesión de nuevo.';
+    }
+
+    return error.error?.msg ?? 'No se pudo guardar el outfit. Intenta de nuevo.';
   }
 }

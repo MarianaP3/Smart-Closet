@@ -1,66 +1,46 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { Outfit } from '../interfaces/outfit.interface';
 import { Garment } from '../interfaces/garment.interface';
 import { GarmentService } from './garment.service';
 
-const INITIAL_OUTFITS: Outfit[] = [
-  {
-    id: '1',
-    name: 'Brunch en la ciudad',
-    style: 'Casual chic',
-    occasion: 'Día',
-    garmentIds: ['2', '8', '9', '16'],
-  },
-  {
-    id: '2',
-    name: 'Noche boho',
-    style: 'Bohemio',
-    occasion: 'Noche',
-    garmentIds: ['4', '7', '11', '13'],
-  },
-  {
-    id: '3',
-    name: 'Office minimal',
-    style: 'Minimalista',
-    occasion: 'Trabajo',
-    garmentIds: ['3', '5', '9'],
-  },
-  {
-    id: '4',
-    name: 'Country western',
-    style: 'Western',
-    occasion: 'Fin de semana',
-    garmentIds: ['1', '6', '12', '15'],
-  },
-  {
-    id: '5',
-    name: 'Street cool',
-    style: 'Urbano',
-    occasion: 'Casual',
-    garmentIds: ['2', '6', '9', '14'],
-  },
-  {
-    id: '6',
-    name: 'Elegancia dorada',
-    style: 'Elegante',
-    occasion: 'Evento',
-    garmentIds: ['4', '7', '11', '14', '16'],
-  },
-];
-
-@Injectable({ 
-  providedIn: 'root' 
+@Injectable({
+  providedIn: 'root',
 })
-
 export class OutfitService {
-  constructor() { }
+  private apiUrl = 'http://localhost:8080/api/outfits';
   private garmentService = inject(GarmentService);
-  private outfits = signal<Outfit[]>(INITIAL_OUTFITS);
+  private outfits = signal<Outfit[]>([]);
 
   readonly allOutfits = this.outfits.asReadonly();
 
+  constructor(private http: HttpClient) {}
+
+  loadOutfits(): Observable<Outfit[]> {
+    return this.http.get<Outfit[]>(this.apiUrl).pipe(
+      tap((outfits) => this.outfits.set(outfits)),
+    );
+  }
+
   getById(id: string): Outfit | undefined {
     return this.outfits().find((outfit) => outfit.id === id);
+  }
+
+  getByIdFromApi(id: string): Observable<Outfit> {
+    return this.http.get<Outfit>(`${this.apiUrl}/${id}`).pipe(
+      tap((outfit) => {
+        const exists = this.outfits().some((item) => item.id === outfit.id);
+
+        if (exists) {
+          this.outfits.update((items) =>
+            items.map((item) => (item.id === outfit.id ? outfit : item)),
+          );
+        } else {
+          this.outfits.update((items) => [...items, outfit]);
+        }
+      }),
+    );
   }
 
   getGarmentsForOutfit(outfit: Outfit): Garment[] {
@@ -69,25 +49,38 @@ export class OutfitService {
       .filter((garment): garment is Garment => garment !== undefined);
   }
 
-  addOutfit(outfit: Omit<Outfit, 'id'>): void {
-    const nextId = String(
-      Math.max(0, ...this.outfits().map((item) => Number(item.id))) + 1,
-    );
-
-    this.outfits.update((outfits) => [...outfits, { id: nextId, ...outfit }]);
-  }
-
-  updateOutfit(id: string, changes: Omit<Outfit, 'id'>): void {
-    this.outfits.update((outfits) =>
-      outfits.map((outfit) =>
-        outfit.id === id ? { id, ...changes } : outfit,
+  addOutfit(outfit: Omit<Outfit, 'id'>): Observable<Outfit> {
+    return this.http.post<Outfit>(this.apiUrl, outfit).pipe(
+      tap((created) =>
+        this.outfits.update((outfits) => [...outfits, created]),
       ),
     );
   }
 
-  deleteOutfit(id: string): void {
-    this.outfits.update((outfits) =>
-      outfits.filter((outfit) => outfit.id !== id),
+  updateOutfit(
+    id: string,
+    changes: Omit<Outfit, 'id'>,
+  ): Observable<Outfit> {
+    return this.http.put<Outfit>(`${this.apiUrl}/${id}`, changes).pipe(
+      tap((updated) =>
+        this.outfits.update((outfits) =>
+          outfits.map((outfit) => (outfit.id === id ? updated : outfit)),
+        ),
+      ),
     );
+  }
+
+  deleteOutfit(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() =>
+        this.outfits.update((outfits) =>
+          outfits.filter((outfit) => outfit.id !== id),
+        ),
+      ),
+    );
+  }
+
+  clearOutfits(): void {
+    this.outfits.set([]);
   }
 }

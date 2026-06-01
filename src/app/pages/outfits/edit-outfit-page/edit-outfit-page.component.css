@@ -158,6 +158,12 @@
   text-align: center;
 }
 
+.loading-message {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 48px 0;
+}
+
 .button {
   display: block;
   width: 40%;

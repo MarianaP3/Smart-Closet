@@ -27,6 +27,7 @@ class Server{
     routes(){
         this.app.use(this.usersPath, require('../routes/users'));
         this.app.use(this.garmentPath, require('../routes/garment'));
+        this.app.use(this.outfits, require('../routes/outfit'));
         this.app.use(this.authPath, require('../routes/auth'));
 
         this.app.get('*', function (req, res) {

@@ -1,6 +1,7 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { GarmentCardComponent } from '../../../components/garment-card/garment-card.component';
+import { GarmentService } from '../../../services/garment.service';
 import { OutfitService } from '../../../services/outfit.service';
 import { AuthService } from '../../../services/auth.service';
 
@@ -10,15 +11,14 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './outfits-page.component.html',
   styleUrl: './outfits-page.component.css',
 })
-export class OutfitsGalleryPageComponent {
+export class OutfitsGalleryPageComponent implements OnInit {
   private outfitService = inject(OutfitService);
+  private garmentService = inject(GarmentService);
   private authService = inject(AuthService);
 
-  ngOnInit(): void {
-    this.authService.redirectIfNotUserArea();
-  }
-
   public outfits = this.outfitService.allOutfits;
+  public isLoading = signal(true);
+  public errorMessage = signal('');
 
   public filterName = signal('');
   public filterStyle = signal('');
@@ -49,6 +49,32 @@ export class OutfitsGalleryPageComponent {
       })),
   );
 
+  ngOnInit(): void {
+    this.authService.redirectIfNotUserArea();
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.garmentService.loadGarments().subscribe({
+      next: () => {
+        this.outfitService.loadOutfits().subscribe({
+          next: () => this.isLoading.set(false),
+          error: (error) => {
+            this.isLoading.set(false);
+            this.errorMessage.set(this.getErrorMessage(error));
+          },
+        });
+      },
+      error: (error) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(this.getErrorMessage(error));
+      },
+    });
+  }
+
   updateFilterName(event: Event): void {
     this.filterName.set((event.target as HTMLInputElement).value);
   }
@@ -65,5 +91,17 @@ export class OutfitsGalleryPageComponent {
     this.filterName.set('');
     this.filterStyle.set('');
     this.filterOccasion.set('');
+  }
+
+  private getErrorMessage(error: { status?: number; error?: { msg?: string } }): string {
+    if (error.status === 0) {
+      return 'No se pudo conectar con el servidor. Verifica que el backend esté corriendo.';
+    }
+
+    if (error.status === 401) {
+      return 'Tu sesión expiró. Inicia sesión de nuevo.';
+    }
+
+    return error.error?.msg ?? 'No se pudo cargar tus outfits.';
   }
 }
